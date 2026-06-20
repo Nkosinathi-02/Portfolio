@@ -153,3 +153,59 @@ setInterval(() => {
     currentImg = (currentImg + 1) % switcherImgs.length;
     switcherImgs[currentImg].classList.add('active');
 }, 3000);
+
+// Web3Forms Contact Form
+const contactForm = document.getElementById('contactForm');
+
+contactForm.addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const formResult = document.getElementById('formResult');
+    const submitBtn = contactForm.querySelector('button[type="submit"]');
+
+    // Show loading state
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+
+    const formData = new FormData(contactForm);
+    const object = Object.fromEntries(formData);
+    const json = JSON.stringify(object);
+
+    try {
+        const response = await fetch('https://api.web3forms.com/submit', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: json
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            formResult.style.display = 'block';
+            formResult.style.background = 'rgba(16, 185, 129, 0.1)';
+            formResult.style.border = '1px solid rgba(16, 185, 129, 0.3)';
+            formResult.style.color = '#10b981';
+            formResult.innerHTML = '<i class="fas fa-check-circle"></i> Message sent successfully! I\'ll get back to you soon.';
+            contactForm.reset();
+        } else {
+            throw new Error('Failed to send');
+        }
+    } catch (error) {
+        formResult.style.display = 'block';
+        formResult.style.background = 'rgba(239, 68, 68, 0.1)';
+        formResult.style.border = '1px solid rgba(239, 68, 68, 0.3)';
+        formResult.style.color = '#ef4444';
+        formResult.innerHTML = '<i class="fas fa-exclamation-circle"></i> Something went wrong. Please try again.';
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Message';
+
+        // Hide message after 5 seconds
+        setTimeout(() => {
+            formResult.style.display = 'none';
+        }, 5000);
+    }
+});
