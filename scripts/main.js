@@ -142,3 +142,14 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+// images
+// Image Switcher
+const switcherImgs = document.querySelectorAll('.switcher-img');
+let currentImg = 0;
+
+setInterval(() => {
+    switcherImgs[currentImg].classList.remove('active');
+    currentImg = (currentImg + 1) % switcherImgs.length;
+    switcherImgs[currentImg].classList.add('active');
+}, 3000);
